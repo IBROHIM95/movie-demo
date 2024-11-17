@@ -22,10 +22,9 @@ import { MovieStatus } from '../../../enums/movie.enum';
 
 interface Data {
 	id: string;
-	title: string;
-	price: string;
+	name: string;
 	agent: string;
-	location: string;
+	country: string;
 	type: string;
 	status: string;
 }
@@ -47,17 +46,12 @@ const headCells: readonly HeadCell[] = [
 		label: 'MB ID',
 	},
 	{
-		id: 'title',
+		id: 'name',
 		numeric: true,
 		disablePadding: false,
-		label: 'TITLE',
+		label: 'NAME',
 	},
-	{
-		id: 'price',
-		numeric: false,
-		disablePadding: false,
-		label: 'PRICE',
-	},
+	
 	{
 		id: 'agent',
 		numeric: false,
@@ -65,10 +59,10 @@ const headCells: readonly HeadCell[] = [
 		label: 'AGENT',
 	},
 	{
-		id: 'location',
+		id: 'country',
 		numeric: false,
 		disablePadding: false,
-		label: 'LOCATION',
+		label: 'COUNTRY',
 	},
 	{
 		id: 'type',
@@ -122,7 +116,7 @@ interface MoviePanelListType {
 	removeMovieHandler: any;
 }
 
-export const PropertyPanelList = (props: MoviePanelListType) => {
+export const MoviePanelList = (props: MoviePanelListType) => {
 	const {
 		movies,
 		anchorEl,
@@ -157,12 +151,12 @@ export const PropertyPanelList = (props: MoviePanelListType) => {
 										<TableCell align="left" className={'name'}>
 										{movie.movieStatus === MovieStatus.ACTIVE ? (
 										   <Stack direction={'row'}>
-												<Link href={`/property/detail?id=${movie?._id}`}>
+												<Link href={`/movie/detail?id=${movie?._id}`}>
 													<div>
 														<Avatar alt="Remy Sharp" src={movieImage} sx={{ ml: '2px', mr: '10px' }} />
 													</div>
 												</Link>
-												<Link href={`/property/detail?id=${movie?._id}`}>
+												<Link href={`/movie/detail?id=${movie?._id}`}>
 													<div>{movie.movieName}</div>
 												</Link>
 											</Stack> ): (

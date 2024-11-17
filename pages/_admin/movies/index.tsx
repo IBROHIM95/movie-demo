@@ -8,7 +8,7 @@ import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import { TabContext } from '@mui/lab';
 import TablePagination from '@mui/material/TablePagination';
-import { PropertyPanelList } from '../../../libs/components/admin/properties/PropertyList';
+import { MoviePanelList } from '../../../libs/components/admin/movies/MovieList';
 import { AllMoviesInquiry } from '../../../libs/types/movie/movie.input';
 import { Movie } from '../../../libs/types/movie/movie';
 import { MovieCountry, MovieStatus } from '../../../libs/enums/movie.enum';
@@ -18,6 +18,7 @@ import { useMutation, useQuery } from '@apollo/client';
 import { REMOVE_MOVIE_BY_ADMIN, UPDATE_MOVIE_BY_ADMIN } from '../../../apollo/admin/mutation';
 import { GET_ALL_MOVIES_BY_ADMIN } from '../../../apollo/admin/query';
 import { T } from '../../../libs/types/common';
+
 const AdminMovies: NextPage = ({ initialInquiry, ...props }: any) => {
 	const [anchorEl, setAnchorEl] = useState<[] | HTMLElement[]>([]);
 	const [moviesInquiry, setMoviesInquiry] = useState<AllMoviesInquiry>(initialInquiry);
@@ -206,7 +207,7 @@ const AdminMovies: NextPage = ({ initialInquiry, ...props }: any) => {
 							</Stack>
 							<Divider />
 						</Box>
-						<PropertyPanelList
+						<MoviePanelList
 							movies={movies}
 							anchorEl={anchorEl}
 							menuIconClickHandler={menuIconClickHandler}

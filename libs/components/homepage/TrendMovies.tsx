@@ -5,46 +5,46 @@ import WestIcon from '@mui/icons-material/West';
 import EastIcon from '@mui/icons-material/East';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Navigation, Pagination } from 'swiper';
-import { Property } from '../../types/movie/movie';
-import { PropertiesInquiry } from '../../types/movie/movie.input';
-import TrendPropertyCard from './TrendPropertyCard';
+import { Movie } from '../../types/movie/movie';
+import { MoviesInquiry } from '../../types/movie/movie.input';
+import TrendMovieCard from './TrendMovieCard';
 import { useMutation, useQuery } from '@apollo/client';
-import { GET_PROPERTIES } from '../../../apollo/user/query';
+import { GET_MOVIES } from '../../../apollo/user/query';
 import { T } from '../../types/common';
-import { LIKE_TARGET_PROPERTY } from '../../../apollo/user/mutation';
+import { LIKE_TARGET_MOVIE } from '../../../apollo/user/mutation';
 import { sweetMixinErrorAlert, sweetTopSmallSuccessAlert } from '../../sweetAlert';
 import { Message } from '../../enums/common.enum';
 
-interface TrendPropertiesProps {
-	initialInput: PropertiesInquiry;
+interface TrendMoviesProps {
+	initialInput: MoviesInquiry;
 }
 
-const TrendProperties = (props: TrendPropertiesProps) => {
+const TrendMovies = (props: TrendMoviesProps) => {
 	const { initialInput } = props;
 	const device = useDeviceDetect();
-	const [trendProperties, setTrendProperties] = useState<Property[]>([]);
+	const [trendMovies, setTrendMovies] = useState<Movie[]>([]);
 
 	/** APOLLO REQUESTS **/
 
-	const [likeTargetMovie] = useMutation(LIKE_TARGET_PROPERTY)
+	const [likeTargetMovie] = useMutation(LIKE_TARGET_MOVIE)
 	
 
 	const {
-		loading: getPropertiesLoading,
-		data: getPropertiesData,
-		error: getPropertiesError,
-		refetch: getPropertiesRefetch,  
-	} = useQuery(GET_PROPERTIES, {
+		loading: getMoviesLoading,
+		data: getMoviesData,
+		error: getMoviesError,
+		refetch: getMoviesRefetch,  
+	} = useQuery(GET_MOVIES, {
 		fetchPolicy: 'cache-and-network',
 		variables: {input: initialInput},
 		notifyOnNetworkStatusChange: true,
 		onCompleted:(data: T) =>  {
-			setTrendProperties(data?.getProperties?.list)
+			setTrendMovies(data?.getMovies?.list)
 		}
 	})
 
 	/** HANDLERS **/
-	const likePropertyHandler = async (user: T, id:string) => {
+	const likeMovieHandler = async (user: T, id:string) => {
 		 try{
             if(!id) return;
 			if(!user._id) throw new Error(Message.NOT_AUTHENTICATED)
@@ -52,19 +52,19 @@ const TrendProperties = (props: TrendPropertiesProps) => {
 			await likeTargetMovie({
 				variables: {input: id},
 			});
-			await getPropertiesRefetch({input: initialInput})
+			await getMoviesRefetch({input: initialInput})
 
 			await sweetTopSmallSuccessAlert('success', 800)
 
 		 } catch(err:any) {
-           console.log('ERROR, likePropertyHandler:', err.message);
+           console.log('ERROR, likeMovieHandler:', err.message);
 		   sweetMixinErrorAlert(err.message).then()
 		   
 		 }
 	}
 
-	if (trendProperties) console.log('trendProperties:', trendProperties);
-	if (!trendProperties) return null;
+	if (trendMovies) console.log('trendMovies:', trendMovies);
+	if (!trendMovies) return null;
 
 	if (device === 'mobile') {
 		return (
@@ -74,7 +74,7 @@ const TrendProperties = (props: TrendPropertiesProps) => {
 						<span>Trend Properties</span>
 					</Stack>
 					<Stack className={'card-box'}>
-						{trendProperties.length === 0 ? (
+						{trendMovies.length === 0 ? (
 							<Box component={'div'} className={'empty-list'}>
 								Trends Empty
 							</Box>
@@ -86,10 +86,10 @@ const TrendProperties = (props: TrendPropertiesProps) => {
 								spaceBetween={15}
 								modules={[Autoplay]}
 							>
-								{trendProperties.map((property: Property) => {
+								{trendMovies.map((movie: Movie) => {
 									return (
-										<SwiperSlide key={property._id} className={'trend-property-slide'}>
-											<TrendPropertyCard property={property} likePropertyHandler={likePropertyHandler} />
+										<SwiperSlide key={movie._id} className={'trend-property-slide'}>
+											<TrendMovieCard movie={movie} likeMovieHandler={likeMovieHandler} />
 										</SwiperSlide>
 									);
 								})}
@@ -117,7 +117,7 @@ const TrendProperties = (props: TrendPropertiesProps) => {
 						</Box>
 					</Stack>
 					<Stack className={'card-box'}>
-						{trendProperties.length === 0 ? (
+						{trendMovies.length === 0 ? (
 							<Box component={'div'} className={'empty-list'}>
 								Trends Empty
 							</Box>
@@ -135,10 +135,10 @@ const TrendProperties = (props: TrendPropertiesProps) => {
 									el: '.swiper-trend-pagination',
 								}}
 							>
-								{trendProperties.map((property: Property) => {
+								{trendMovies.map((movie: Movie) => {
 									return (
-										<SwiperSlide key={property._id} className={'trend-property-slide'}>
-											<TrendPropertyCard property={property} likePropertyHandler={likePropertyHandler} />
+										<SwiperSlide key={movie._id} className={'trend-property-slide'}>
+											<TrendMovieCard movie={movie} likeMovieHandler={likeMovieHandler} />
 										</SwiperSlide>
 									);
 								})}
@@ -151,14 +151,14 @@ const TrendProperties = (props: TrendPropertiesProps) => {
 	}
 };
 
-TrendProperties.defaultProps = {
+TrendMovies.defaultProps = {
 	initialInput: {
 		page: 1,
 		limit: 8,
-		sort: 'propertyLikes',
+		sort: 'movieLikes',
 		direction: 'DESC',
 		search: {},
 	},
 };
 
-export default TrendProperties;
+export default TrendMovies;

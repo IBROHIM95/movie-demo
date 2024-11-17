@@ -5,50 +5,50 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Navigation, Pagination } from 'swiper';
 import WestIcon from '@mui/icons-material/West';
 import EastIcon from '@mui/icons-material/East';
-import PopularPropertyCard from './PopularPropertyCard';
-import { Property } from '../../types/movie/movie';
+import PopularMovieCard from './PopularMovieCard';
+import { Movie } from '../../types/movie/movie';
 import Link from 'next/link';
-import { PropertiesInquiry } from '../../types/movie/movie.input';
+import { MoviesInquiry } from '../../types/movie/movie.input';
 import { useQuery } from '@apollo/client';
-import { GET_PROPERTIES } from '../../../apollo/user/query';
+import { GET_MOVIES } from '../../../apollo/user/query';
 import { T } from '../../types/common';
 
-interface PopularPropertiesProps {
-	initialInput: PropertiesInquiry;
+interface PopularMoviesProps {
+	initialInput: MoviesInquiry;
 }
 
-const PopularProperties = (props: PopularPropertiesProps) => {
+const PopularMovies = (props: PopularMoviesProps) => {
 	const { initialInput } = props;
 	const device = useDeviceDetect();
-	const [popularProperties, setPopularProperties] = useState<Property[]>([]);
+	const [popularMovies, setPopularMovies] = useState<Movie[]>([]);
 
 	/** APOLLO REQUESTS **/
 
 
 	const {
-		loading: getPropertiesLoading,
-		data: getPropertiesData,
-		error: getPropertiesError,
-		refetch: getPropertiesRefetch,  
-	} = useQuery(GET_PROPERTIES, {
+		loading: getMoviesLoading,
+		data: getMoviesData,
+		error: getMoviesError,
+		refetch: getMoviesRefetch,  
+	} = useQuery(GET_MOVIES, {
 		fetchPolicy: 'cache-and-network',
 		variables: {input: initialInput},
 		notifyOnNetworkStatusChange: true,
 		onCompleted:(data: T) =>  {
-			setPopularProperties(data?.getProperties?.list)
+			setPopularMovies(data?.getMovies?.list)
 		}
 	})
 
 	/** HANDLERS **/
 
-	if (!popularProperties) return null;
+	if (!popularMovies) return null;
 
 	if (device === 'mobile') {
 		return (
 			<Stack className={'popular-properties'}>
 				<Stack className={'container'}>
 					<Stack className={'info-box'}>
-						<span>Popular properties</span>
+						<span>Popular movies</span>
 					</Stack>
 					<Stack className={'card-box'}>
 						<Swiper
@@ -58,10 +58,10 @@ const PopularProperties = (props: PopularPropertiesProps) => {
 							spaceBetween={25}
 							modules={[Autoplay]}
 						>
-							{popularProperties.map((property: Property) => {
+							{popularMovies.map((movie: Movie) => {
 								return (
-									<SwiperSlide key={property._id} className={'popular-property-slide'}>
-										<PopularPropertyCard property={property} />
+									<SwiperSlide key={movie._id} className={'popular-property-slide'}>
+										<PopularMovieCard movie={movie} />
 									</SwiperSlide>
 								);
 							})}
@@ -76,8 +76,8 @@ const PopularProperties = (props: PopularPropertiesProps) => {
 				<Stack className={'container'}>
 					<Stack className={'info-box'}>
 						<Box component={'div'} className={'left'}>
-							<span>Popular properties</span>
-							<p>Popularity is based on views</p>
+							<span>Popular movies</span>
+							<p>Movies is based on views</p>
 						</Box>
 						<Box component={'div'} className={'right'}>
 							<div className={'more-box'}>
@@ -102,10 +102,10 @@ const PopularProperties = (props: PopularPropertiesProps) => {
 								el: '.swiper-popular-pagination',
 							}}
 						>
-							{popularProperties.map((property: Property) => {
+							{popularMovies.map((movie: Movie) => {
 								return (
-									<SwiperSlide key={property._id} className={'popular-property-slide'}>
-										<PopularPropertyCard property={property} />
+									<SwiperSlide key={movie._id} className={'popular-property-slide'}>
+										<PopularMovieCard movie={movie} />
 									</SwiperSlide>
 								);
 							})}
@@ -122,14 +122,14 @@ const PopularProperties = (props: PopularPropertiesProps) => {
 	}
 };
 
-PopularProperties.defaultProps = {
+PopularMovies.defaultProps = {
 	initialInput: {
 		page: 1,
 		limit: 7,
-		sort: 'propertyViews',
+		sort: 'movieViews',
 		direction: 'DESC',
 		search: {},
 	},
 };
 
-export default PopularProperties;
+export default PopularMovies;

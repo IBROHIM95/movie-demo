@@ -16,78 +16,74 @@ interface MovieBigCardProps {
 	likeMovieHandler?: any
 }
 
-const PropertyBigCard = (props: MovieBigCardProps) => {
+const MovieBigCard = (props: MovieBigCardProps) => {
 	const { movie, likeMovieHandler } = props;
 	const device = useDeviceDetect();
 	const user = useReactiveVar(userVar);
 	const router = useRouter();
 
 	/** HANDLERS **/
-	const goPropertyDetatilPage = (propertyId: string) => {
-		router.push(`/property/detail?id=${propertyId}`);
+	const goMovieDetatilPage = (movieId: string) => {
+		router.push(`/movie/detail?id=${movieId}`);
 	};
 
 	if (device === 'mobile') {
 		return <div>APARTMEND BIG CARD</div>;
 	} else {
 		return (
-			<Stack className="property-big-card-box" onClick={() => goPropertyDetatilPage(property?._id)}>
+			<Stack className="property-big-card-box" onClick={() => goMovieDetatilPage(movie?._id)}>
 				<Box
 					component={'div'}
 					className={'card-img'}
-					style={{ backgroundImage: `url(${REACT_APP_API_URL}/${property?.propertyImages?.[0]})` }}
+					style={{ backgroundImage: `url(${REACT_APP_API_URL}/${movie?.movieImages?.[0]})` }}
 				>
-					{property?.propertyRank && property?.propertyRank >= 50 && (
+					{movie?.movieRank && movie?.movieRank >= 50 && (
 						<div className={'status'}>
 							<img src="/img/icons/electricity.svg" alt="" />
 							<span>top</span>
 						</div>
 					)}
 
-					<div className={'price'}>${formatterStr(property?.propertyPrice)}</div>
+					
 				</Box>
 				<Box component={'div'} className={'info'}>
-					<strong className={'title'}>{property?.propertyTitle}</strong>
-					<p className={'desc'}>{property?.propertyAddress}</p>
+					<strong className={'title'}>{movie?.movieName}</strong>
+					
 					<div className={'options'}>
 						<div>
 							<img src="/img/icons/bed.svg" alt="" />
-							<span>{property?.propertyBeds} bed</span>
+							<span>{movie?.movieSeasons} season</span>
 						</div>
 						<div>
 							<img src="/img/icons/room.svg" alt="" />
-							<span>{property?.propertyRooms} rooms</span>
+							<span>{movie?.movieDuration} duration</span>
 						</div>
 						<div>
 							<img src="/img/icons/expand.svg" alt="" />
-							<span>{property?.propertySquare} m2</span>
+							<span>{movie?.movieYear} - year</span>
 						</div>
 					</div>
 					<Divider sx={{ mt: '15px', mb: '17px' }} />
 					<div className={'bott'}>
-						<div>
-							{/* {property?.propertyRent ? <p>Rent</p> : <span>Rent</span>} */}
-							{property?.propertyBarter ? <p>Barter</p> : <span>Barter</span>}
-						</div>
 						<div className="buttons-box">
 							<IconButton color={'default'}>
 								<RemoveRedEyeIcon />
 							</IconButton>
-							<Typography className="view-cnt">{property?.propertyViews}</Typography>
+							<Typography className="view-cnt">{movie?.movieViews}</Typography>
 							<IconButton
 								color={'default'}
 								onClick={(e:any) => {
 									e.stopPropagation();
-									likePropertyHandler(user, property?._id)
+									likeMovieHandler(user, movie?._id)
 								}}
 							>
-								{property?.meLiked && property?.meLiked[0]?.myFavorite ? (
+								{movie?.meLiked && movie?.meLiked[0]?.myFavorite ? (
 									<FavoriteIcon style={{ color: 'red' }} />
 								) : (
 									<FavoriteIcon />
 								)}
 							</IconButton>
-							<Typography className="view-cnt">{property?.propertyLikes}</Typography>
+							<Typography className="view-cnt">{movie?.movieLikes}</Typography>
 						</div>
 					</div>
 				</Box>
@@ -96,4 +92,4 @@ const PropertyBigCard = (props: MovieBigCardProps) => {
 	}
 };
 
-export default PropertyBigCard;
+export default MovieBigCard;

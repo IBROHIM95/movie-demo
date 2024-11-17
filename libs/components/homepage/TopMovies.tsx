@@ -5,45 +5,45 @@ import WestIcon from '@mui/icons-material/West';
 import EastIcon from '@mui/icons-material/East';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Navigation, Pagination } from 'swiper';
-import TopPropertyCard from './TopPropertyCard';
-import { PropertiesInquiry } from '../../types/movie/movie.input';
-import { Property } from '../../types/movie/movie';
+import TopMovieCard from './TopMovieCard';
+import { MoviesInquiry } from '../../types/movie/movie.input';
+import { Movie } from '../../types/movie/movie';
 import { useMutation, useQuery } from '@apollo/client';
-import { GET_PROPERTIES } from '../../../apollo/user/query';
+import { GET_MOVIES } from '../../../apollo/user/query';
 import { T } from '../../types/common';
-import { LIKE_TARGET_PROPERTY } from '../../../apollo/user/mutation';
+import { LIKE_TARGET_MOVIE } from '../../../apollo/user/mutation';
 import { Message } from '../../enums/common.enum';
 import { sweetMixinErrorAlert, sweetTopSmallSuccessAlert } from '../../sweetAlert';
 
-interface TopPropertiesProps {
-	initialInput: PropertiesInquiry;
+interface TopMoviesProps {
+	initialInput: MoviesInquiry;
 }
 
-const TopProperties = (props: TopPropertiesProps) => {
+const TopMovies = (props: TopMoviesProps) => {
 	const { initialInput } = props;
 	const device = useDeviceDetect();
-	const [topProperties, setTopProperties] = useState<Property[]>([]);
+	const [topMovies, setTopMovies] = useState<Movie[]>([]);
 
 	/** APOLLO REQUESTS **/
-	const [likeTargetMovie] = useMutation(LIKE_TARGET_PROPERTY)
+	const [likeTargetMovie] = useMutation(LIKE_TARGET_MOVIE)
 
 	const {
-		loading: getPropertiesLoading,
-		data: getPropertiesData,
-		error: getPropertiesError,
-		refetch: getPropertiesRefetch,  
-	} = useQuery(GET_PROPERTIES, {
+		loading: getMoviesLoading,
+		data: getMoviesData,
+		error: getMoviesError,
+		refetch: getMoviesRefetch,  
+	} = useQuery(GET_MOVIES, {
 		fetchPolicy: 'cache-and-network',
 		variables: {input: initialInput},
 		notifyOnNetworkStatusChange: true,
 		onCompleted:(data: T) =>  {
-			setTopProperties(data?.getProperties?.list)
+			setTopMovies(data?.getMovies?.list)
 		}
 	})
 
 	/** HANDLERS **/
 
-	const likePropertyHandler = async (user: T, id:string) => {
+	const likeMovieHandler = async (user: T, id:string) => {
 		try{
 		   if(!id) return;
 		   if(!user._id) throw new Error(Message.NOT_AUTHENTICATED)
@@ -51,7 +51,7 @@ const TopProperties = (props: TopPropertiesProps) => {
 		   await likeTargetMovie({
 			   variables: {input: id},
 		   });
-		   await getPropertiesRefetch({input: initialInput})
+		   await getMoviesRefetch({input: initialInput})
 
 		   await sweetTopSmallSuccessAlert('success', 800)
 
@@ -68,7 +68,7 @@ const TopProperties = (props: TopPropertiesProps) => {
 			<Stack className={'top-properties'}>
 				<Stack className={'container'}>
 					<Stack className={'info-box'}>
-						<span>Top properties</span>
+						<span>Top movies</span>
 					</Stack>
 					<Stack className={'card-box'}>
 						<Swiper
@@ -78,10 +78,10 @@ const TopProperties = (props: TopPropertiesProps) => {
 							spaceBetween={15}
 							modules={[Autoplay]}
 						>
-							{topProperties.map((property: Property) => {
+							{topMovies.map((movie: Movie) => {
 								return (
-									<SwiperSlide className={'top-property-slide'} key={property?._id}>
-										<TopPropertyCard property={property} likePropertyHandler={likePropertyHandler}/>
+									<SwiperSlide className={'top-property-slide'} key={movie?._id}>
+										<TopMovieCard movie={movie} likeMovieHandler={likeMovieHandler}/>
 									</SwiperSlide>
 								);
 							})}
@@ -96,8 +96,8 @@ const TopProperties = (props: TopPropertiesProps) => {
 				<Stack className={'container'}>
 					<Stack className={'info-box'}>
 						<Box component={'div'} className={'left'}>
-							<span>Top properties</span>
-							<p>Check out our Top Properties</p>
+							<span>Top movies</span>
+							<p>Check out our Top Movies</p>
 						</Box>
 						<Box component={'div'} className={'right'}>
 							<div className={'pagination-box'}>
@@ -121,10 +121,10 @@ const TopProperties = (props: TopPropertiesProps) => {
 								el: '.swiper-top-pagination',
 							}}
 						>
-							{topProperties.map((property: Property) => {
+							{topMovies.map((movie: Movie) => {
 								return (
-									<SwiperSlide className={'top-property-slide'} key={property?._id}>
-										<TopPropertyCard property={property} likePropertyHandler={likePropertyHandler} />
+									<SwiperSlide className={'top-property-slide'} key={movie?._id}>
+										<TopMovieCard movie={movie} likeMovieHandler={likeMovieHandler} />
 									</SwiperSlide>
 								);
 							})}
@@ -136,14 +136,14 @@ const TopProperties = (props: TopPropertiesProps) => {
 	}
 };
 
-TopProperties.defaultProps = {
+TopMovies.defaultProps = {
 	initialInput: {
 		page: 1,
 		limit: 8,
-		sort: 'propertyRank',
+		sort: 'movieRank',
 		direction: 'DESC',
 		search: {},
 	},
 };
 
-export default TopProperties;
+export default TopMovies;
